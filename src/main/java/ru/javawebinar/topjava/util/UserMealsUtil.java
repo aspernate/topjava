@@ -3,11 +3,12 @@ package ru.javawebinar.topjava.util;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExceed;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * GKislin
@@ -29,7 +30,26 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExceed>  getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with correctly exceeded field
-        return null;
+        final Map<LocalDate, Integer> caloriesSumByDate = new HashMap<>();
+        mealList.forEach(meal -> caloriesSumByDate.merge(meal.getDateTime().toLocalDate(), meal.getCalories(), Integer::sum));
+
+        final List<UserMealWithExceed> mealsWithExceeded = new ArrayList<>();
+        mealList.forEach(meal -> {
+            if(meal.getDateTime().toLocalTime().compareTo(startTime) >= 0 && meal.getDateTime().toLocalTime().compareTo(endTime) <= 0)
+            mealsWithExceeded.add(new UserMealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), caloriesSumByDate.get(meal.getDateTime()) > caloriesPerDay));
+        });
+        return mealsWithExceeded;
+
+        /*
+        Map<LocalDate, Integer> caloriesSumByDate2 = mealList.stream()
+               .collect(Collectors.toMap(
+                       time -> time.getDateTime().toLocalDate(),
+                       UserMeal::getCalories, (date1, date2) -> date1 + date2
+               ));
+
+        return mealList.stream()
+                .filter(meal -> meal.getDateTime().toLocalTime().compareTo(startTime) >= 0 && meal.getDateTime().toLocalTime().compareTo(endTime) <= 0)
+                .map(meal -> new UserMealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), caloriesSumByDate2.get(meal.getDateTime().toLocalDate()) > meal.getCalories()))
+                .collect(Collectors.toList()); */
     }
 }
