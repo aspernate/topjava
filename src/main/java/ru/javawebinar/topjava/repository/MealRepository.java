@@ -3,13 +3,19 @@ package ru.javawebinar.topjava.repository;
 import ru.javawebinar.topjava.model.Meal;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface MealRepository {
-    Meal save(Meal Meal);
 
-    void delete(int id);
+    // null if updated meal do not belong to userId
+    Meal save(Meal meal, int userId);
 
-    Meal get(int id);
+    // false if meal do not belong to userId
+    boolean delete(int id, int userId);
 
-    Collection<Meal> getAll();
+    // null if meal do not belong to userId
+    Meal get(int id, int userId);
+
+    // ORDERED dateTime
+   List<Meal> getAll(int userId);
 }
