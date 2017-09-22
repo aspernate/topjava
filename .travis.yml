@@ -8,8 +8,6 @@ cache:
   - $HOME/.m2
 
 # https://docs.travis-ci.com/user/database-setup/#PostgreSQL
-before_script:
-  - psql -c 'create user "riabov"; grant all privileges on database postgres to "riabov"' -U postgres
 
 # https://docs.travis-ci.com/user/customizing-the-build#Building-Specific-Branches
 branches:
